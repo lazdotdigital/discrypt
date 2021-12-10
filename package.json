@@ -1,0 +1,29 @@
+{
+  "name": "discrypt",
+  "version": "1.0.0",
+  "description": "Browser extension that adds client side E2E encryption to Discord via PGP.",
+  "repository": "https://github.com/lazdotdigital/discrypt",
+  "author": "Lazarus Holl",
+  "license": "MIT",
+  "targets": {
+    "webext-dev": {
+      "sourceMap": {
+        "inline": true,
+        "inlineSources": true
+      }
+    },
+    "webext-prod": {}
+  },
+  "scripts": {
+    "build": "parcel build src/manifest.json --target webext-prod ",
+    "start": "parcel src/manifest.json --target webext-dev"
+  },
+  "devDependencies": {
+    "@parcel/config-webextension": "^2.0.1",
+    "parcel": "^2.0.1"
+  },
+  "dependencies": {
+    "openpgp": "^5.0.1",
+    "text-encoding-utf-8": "^1.0.2"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "manifest_version": 2,
+  "name": "Discrypt",
+  "version": "1.0",
+
+  "description": "Adds client side E2E encryption to Discord via PGP.",
+
+  "icons": {
+    "48": "icons/48.png",
+    "96": "icons/96.png"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["https://discord.com/channels/*/*"],
+      "js": ["./discrypt.js"]
+    }
+  ]
+}
