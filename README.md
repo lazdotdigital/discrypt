@@ -6,7 +6,7 @@
 
 ### How to use
 
-- After installation, a DM with someone on the Discord website. You will notice an alert popup.
+- After installation, open a DM with someone on the Discord website. You will notice an alert popup.
 - Once the page is fully loaded and you are ready to enable discrypt, press `ctrl+d`.
 - Open your armored private key file, then optionally enter a passphrase (your key and passphrase are only stored in memory).
 - You will notice your public key pop up. Copy it, paste it into the chat box, then hit enter. The person you are DMing should do the same.
