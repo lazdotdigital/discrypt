@@ -1,9 +1,10 @@
-import { currentChannel, removeWhitespace } from './utils';
+import { removeWhitespace } from './utils';
 import * as openpgp from 'openpgp';
 import * as selectors from './selectors';
 import { beginningOfPublicKey, beginningOfMessage } from './constants';
-import { currentChannel, discryptMessage, getPrivateKey } from './utils';
+import { discryptMessage } from './utils';
 import * as state from './state';
+import Swal from 'sweetalert2';
 
 export const slateTextAreaKeyDown = async e => {
   if (e.key === 'Enter' || (e.key === 'v' && e.ctrlKey)) {
@@ -11,22 +12,37 @@ export const slateTextAreaKeyDown = async e => {
   }
   const recipientPublicKey = await state.recipientPublicKey();
   if (!recipientPublicKey) {
-    alert('No recipient public key detected.');
+    await Swal.fire('No recipient public key detected.');
     return;
   }
 
   e.preventDefault();
 
-  const text = prompt('Message (paste when done):');
+  const { value: text } = await Swal.fire({
+    title: 'Message',
+    input: 'textarea',
+    inputAttributes: {
+      autocapitalize: 'off',
+      autocorrect: 'off',
+    },
+  });
   const textEncrypted = await openpgp.encrypt({
     message: await openpgp.createMessage({ text }),
     encryptionKeys: recipientPublicKey,
   });
-  alert(textEncrypted);
+  await Swal.fire({
+    title: 'Encrypted message',
+    input: 'textarea',
+    inputAttributes: {
+      autocapitalize: 'off',
+      autocorrect: 'off',
+    },
+    inputValue: textEncrypted,
+  });
   state.cacheMessage(removeWhitespace(textEncrypted), text);
 };
 
-export const messagesContainerTextContentChange = async () => {
+export const messagesContainerInterval = async () => {
   const privateKey = state.privateKey();
   const publicKey = await state.publicKey();
   selectors.messages().forEach(async el => {
@@ -43,13 +59,17 @@ export const messagesContainerTextContentChange = async () => {
       if (cached) {
         el.innerHTML = discryptMessage(cached);
       } else {
-        const { data } = await openpgp.decrypt({
-          message: await openpgp.readMessage({
-            armoredMessage: text,
-          }),
-          decryptionKeys: privateKey,
-        });
-        el.innerHTML = discryptMessage(data);
+        try {
+          const { data } = await openpgp.decrypt({
+            message: await openpgp.readMessage({
+              armoredMessage: text,
+            }),
+            decryptionKeys: privateKey,
+          });
+          el.innerHTML = discryptMessage(data);
+        } catch (err) {
+          el.innerHTML = discryptMessage(`<i>${err}</i>`);
+        }
       }
     }
   });
