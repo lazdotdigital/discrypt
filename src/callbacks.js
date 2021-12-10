@@ -66,6 +66,7 @@ export const messagesContainerInterval = async () => {
             }),
             decryptionKeys: privateKey,
           });
+          state.cacheMessage(textNoWhitespace, data);
           el.innerHTML = discryptMessage(data);
         } catch (err) {
           el.innerHTML = discryptMessage(`<i>${err}</i>`);
